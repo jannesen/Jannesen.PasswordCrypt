@@ -12,6 +12,9 @@ trim_trailing_whitespace = true
 # IDE1006: Naming Styles
 dotnet_diagnostic.IDE1006.severity = none
 
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+
 dotnet_diagnostic.IDE0017.severity = error
 dotnet_diagnostic.IDE0029.severity = error
 dotnet_diagnostic.IDE0030.severity = error

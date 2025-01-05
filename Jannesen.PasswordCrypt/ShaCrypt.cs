@@ -32,7 +32,7 @@ namespace Jannesen.PasswordCrypt
             if (iterationCount != DefaultShaIterationCount) {
                 sb.Append("rounds=");
                 sb.Append(iterationCount);
-                sb.Append("$");
+                sb.Append('$');
             }
             sb.Append(Encoding.ASCII.GetString(salt));
             sb.Append('$');
@@ -51,9 +51,9 @@ namespace Jannesen.PasswordCrypt
             if (passwordHash != null && passwordHash.StartsWith(StartWith)) {
                 var hashparts = passwordHash.Split('$');
 
-                int                 iterationCount = 0;
-                byte[]              salt           = null;
-                string              hash           = null;
+                var    iterationCount = 0;
+                byte[] salt           = null;
+                string hash           = null;
 
                 if (hashparts.Length == 4) {
                     iterationCount = DefaultShaIterationCount;
@@ -77,13 +77,15 @@ namespace Jannesen.PasswordCrypt
             return false;
         }
 
-        protected abstract          HashAlgorithm   createHashAlgorithm();
-        protected abstract          void            fillBytes(StringBuilder sb, byte[] bytes);
+        internal abstract           HashAlgorithm   createHashAlgorithm();
+        internal abstract           void            fillBytes(StringBuilder sb, byte[] bytes);
 
         private static              byte[]          _create_salt()
         {
             var salt = new byte[16];
-            RandomNumberGenerator.Create().GetBytes(salt);
+            using (var g = RandomNumberGenerator.Create()) {
+                g.GetBytes(salt);
+            }
             for (var i = 0; i < salt.Length; i++) {  // make it an ascii
                 salt[i] = (byte)_base64Characters[salt[i] % _base64Characters.Length];
             }
@@ -200,20 +202,20 @@ namespace Jannesen.PasswordCrypt
             return digest.Hash ?? Array.Empty<byte>();
         }
 
-        protected static            void            base64TripetFill(StringBuilder sb, byte byte2, byte byte1, byte byte0)
+        internal static             void            base64TripetFill(StringBuilder sb, byte byte2, byte byte1, byte byte0)
         {
             sb.Append(_base64Characters[byte0 & 0x3F]);
             sb.Append(_base64Characters[((byte1 & 0x0F) << 2) | (byte0 >> 6)]);
             sb.Append(_base64Characters[((byte2 & 0x03) << 4) | (byte1 >> 4)]);
             sb.Append(_base64Characters[byte2 >> 2]);
         }
-        protected static            void            base64TripetFill(StringBuilder sb, byte byte1, byte byte0)
+        internal static             void            base64TripetFill(StringBuilder sb, byte byte1, byte byte0)
         {
             sb.Append(_base64Characters[byte0 & 0x3F]);
             sb.Append(_base64Characters[((byte1 & 0x0F) << 2) | (byte0 >> 6)]);
             sb.Append(_base64Characters[byte1 >> 4]);
         }
-        protected static            void            base64TripetFill(StringBuilder sb, byte byte0)
+        internal static             void            base64TripetFill(StringBuilder sb, byte byte0)
         {
             sb.Append(_base64Characters[byte0 & 0x3F]);
             sb.Append(_base64Characters[byte0 >> 6]);

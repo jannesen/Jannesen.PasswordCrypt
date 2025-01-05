@@ -8,11 +8,11 @@ namespace Jannesen.PasswordCrypt
     {
         public  override            string          StartWith   => "$6$";
 
-        protected override          HashAlgorithm   createHashAlgorithm()
+        internal override           HashAlgorithm   createHashAlgorithm()
         {
             return System.Security.Cryptography.SHA512.Create();
         }
-        protected override          void            fillBytes(StringBuilder sb, byte[] bhash)
+        internal override           void            fillBytes(StringBuilder sb, byte[] bhash)
         {
             base64TripetFill(sb, bhash[00], bhash[21], bhash[42]);
             base64TripetFill(sb, bhash[22], bhash[43], bhash[01]);
