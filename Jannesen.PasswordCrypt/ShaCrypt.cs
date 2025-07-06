@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -36,7 +36,7 @@ namespace Jannesen.PasswordCrypt
             }
             sb.Append(Encoding.ASCII.GetString(salt));
             sb.Append('$');
-        
+
             fillBytes(sb, bhash);
 
             return sb.ToString();
@@ -66,7 +66,7 @@ namespace Jannesen.PasswordCrypt
                         hash = hashparts[4];
                     }
                 }
-            
+
                 if (iterationCount > 0 && salt != null && hash != null) {
                     var sb = new StringBuilder();
                     fillBytes(sb, _createHash(password, salt, iterationCount));
@@ -127,7 +127,7 @@ namespace Jannesen.PasswordCrypt
                 for (var i = 0; i < password.Length; i++) {                                         // step 14
                     _addDigest(digestDP, password);
                 }
-            
+
                 var hashDP = _finishDigest(digestDP);               // step 15
                 var p = _produceBytes(hashDP, password.Length);     // step 16
 
