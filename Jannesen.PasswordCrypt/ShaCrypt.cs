@@ -8,7 +8,7 @@ namespace Jannesen.PasswordCrypt
     public abstract class ShaCrypt: IPasswordHash
     {
         private const               int             DefaultShaIterationCount = 5000;
-        private static readonly     char[]          _base64Characters = new char[] { '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+        private static readonly     char[]          _base64Characters = [ '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ];
 
         public  abstract            string          StartWith   { get; }
 
@@ -51,9 +51,9 @@ namespace Jannesen.PasswordCrypt
             if (passwordHash != null && passwordHash.StartsWith(StartWith)) {
                 var hashparts = passwordHash.Split('$');
 
-                var    iterationCount = 0;
-                byte[] salt           = null;
-                string hash           = null;
+                var iterationCount = 0;
+                var salt           = (byte[]?)null;
+                var hash           = (string?)null;
 
                 if (hashparts.Length == 4) {
                     iterationCount = DefaultShaIterationCount;
@@ -61,7 +61,7 @@ namespace Jannesen.PasswordCrypt
                     hash = hashparts[3];
                 }
                 else if (hashparts.Length == 5 && hashparts[2].StartsWith("rounds=", StringComparison.Ordinal)) {
-                    if (int.TryParse(hashparts[2].Substring(7), NumberStyles.Integer, CultureInfo.InvariantCulture, out iterationCount)) {
+                    if (int.TryParse(hashparts[2].AsSpan(7), NumberStyles.Integer, CultureInfo.InvariantCulture, out iterationCount)) {
                         salt = Encoding.ASCII.GetBytes(hashparts[3]);
                         hash = hashparts[4];
                     }
@@ -198,8 +198,8 @@ namespace Jannesen.PasswordCrypt
         }
         private static              byte[]          _finishDigest(HashAlgorithm digest)
         {
-            digest.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-            return digest.Hash ?? Array.Empty<byte>();
+            digest.TransformFinalBlock([], 0, 0);
+            return digest.Hash ?? [];
         }
 
         internal static             void            base64TripetFill(StringBuilder sb, byte byte2, byte byte1, byte byte0)
